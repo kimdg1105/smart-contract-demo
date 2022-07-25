@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./MintTokenContract.sol";
-import "./node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract SaleTokenContract {
     MintTokenContract public mintTokenContract;
@@ -14,12 +14,11 @@ contract SaleTokenContract {
     }
 
     // structs
-    struct DGRTokenData {
+    struct TokenData {
         uint256 tokenId;
         uint256 tokenType;
         uint256 tokenPrice;
     }
-
     // mappings
     mapping(uint256 => uint256) public tokenPrices;
     // arrays
@@ -59,10 +58,10 @@ contract SaleTokenContract {
         }
     }
 
-    function getOnSaleTokens() public view returns (DGRTokenData[] memory) {
+    function getOnSaleTokens() public view returns (TokenData[] memory) {
         uint256 onSaleTokenArrayLength = getOnSaleTokenArrayLength();
 
-        DGRTokenData[] memory onSaleTokenDataArray = new DGRTokenData[](
+        TokenData[] memory onSaleTokenDataArray = new TokenData[](
             onSaleTokenArrayLength
         );
 
@@ -70,12 +69,7 @@ contract SaleTokenContract {
             uint256 tokenId = onSaleTokenArray[i];
             uint256 tokenType = mintTokenContract.getTokenType(tokenId);
             uint256 tokenPrice = tokenPrices[tokenId];
-
-            onSaleTokenDataArray[i] = DGRTokenData(
-                tokenId,
-                tokenType,
-                tokenPrice
-            );
+            onSaleTokenDataArray[i] = TokenData(tokenId, tokenType, tokenPrice);
         }
 
         return onSaleTokenDataArray;
