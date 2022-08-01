@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Image } from "@chakra-ui/react";
 
 interface SampleCardProps {

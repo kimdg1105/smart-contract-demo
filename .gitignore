@@ -251,7 +251,6 @@ package-lock.json
 
 #custom
 .deps
-public
 *.d.ts
 
 # End of https://www.toptal.com/developers/gitignore/api/solidity,soliditytruffle,node,react

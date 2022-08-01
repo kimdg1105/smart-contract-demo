@@ -1,7 +1,7 @@
 import { Button, Flex, Grid, Text } from "@chakra-ui/react";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import MySampleCard, { IMySampleCard } from "../components/MySampleCard";
-import { mintSampleTokenContract, saleSampleTokenAddress } from "../contracts";
+import { sampleTokenContract, sampleTokenAddress } from "../contracts";
 
 interface MySampleProps {
     account: string;
@@ -13,18 +13,18 @@ const MySample: FC<MySampleProps> = ({ account }) => {
 
     const getSampleTokens = async () => {
         try {
-            const balanceLength = await mintSampleTokenContract.methods
+            const balanceLength = await sampleTokenContract.methods
                 .balanceOf(account)
                 .call();
             if (balanceLength === "0") return;
 
             const tempSampleCardArray: IMySampleCard[] = [];
-            const response = await mintSampleTokenContract.methods
+            const response = await sampleTokenContract.methods
                 .getTokens(account)
                 .call();
 
             response.map((v: IMySampleCard) => {
-                tempSampleCardArray.push({ tokenId: v.tokenId, tokenType: v.tokenType, tokenPrice: v.tokenPrice });
+                return tempSampleCardArray.push({ tokenId: v.tokenId, tokenType: v.tokenType, tokenPrice: v.tokenPrice });
             });
             setSampleCardArray(tempSampleCardArray);
         } catch (error) {
@@ -34,8 +34,8 @@ const MySample: FC<MySampleProps> = ({ account }) => {
 
     const getIsApproved = async () => {
         try {
-            const response = await mintSampleTokenContract.methods
-                .isApprovedForAll(account, saleSampleTokenAddress)
+            const response = await sampleTokenContract.methods
+                .isApprovedForAll(account, sampleTokenAddress)
                 .call();
             if (response) {
                 setSaleStatus(response);
@@ -50,8 +50,8 @@ const MySample: FC<MySampleProps> = ({ account }) => {
         try {
             if (!account) return;
 
-            const response = await mintSampleTokenContract.methods
-                .setApprovalForAll(saleSampleTokenAddress, !saleStatus)
+            const response = await sampleTokenContract.methods
+                .setApprovalForAll(sampleTokenAddress, !saleStatus)
                 .send({ from: account });
 
             if (response.status) {
@@ -67,7 +67,7 @@ const MySample: FC<MySampleProps> = ({ account }) => {
         if (!account) return;
         getIsApproved();
         getSampleTokens();
-    }, [account]);
+    });
 
     return (
         <>

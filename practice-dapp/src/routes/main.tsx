@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
 import { Box, Flex, Button } from "@chakra-ui/react";
-import { mintSampleTokenContract } from "../contracts";
+import { sampleTokenContract } from "../contracts";
 import SampleCard from "../components/SampleCard";
 
 interface MainProps {
@@ -14,20 +14,20 @@ const Main: FC<MainProps> = ({ account }) => {
     try {
       if (!account) return;
 
-      const response = await mintSampleTokenContract.methods
+      const response = await sampleTokenContract.methods
         .mintToken()
         .send({ from: account });
 
       if (response.status) {
-        const balanceLength = await mintSampleTokenContract.methods
+        const balanceLength = await sampleTokenContract.methods
           .balanceOf(account)
           .call();
 
-        const tokenId = await mintSampleTokenContract.methods
+        const tokenId = await sampleTokenContract.methods
           .tokenOfOwnerByIndex(account, parseInt(balanceLength.length, 10) - 1)
           .call();
 
-        const tokenType = await mintSampleTokenContract.methods
+        const tokenType = await sampleTokenContract.methods
           .tokenTypes(tokenId)
           .call();
 

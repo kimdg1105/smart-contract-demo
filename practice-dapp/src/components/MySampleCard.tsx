@@ -1,6 +1,6 @@
 import { Box, Button, Input, InputGroup, InputRightAddon, Text } from "@chakra-ui/react";
-import React, { ChangeEvent, FC, useState } from "react";
-import { saleSampleTokenContract, web3 } from "../contracts";
+import { ChangeEvent, FC, useState } from "react";
+import { sampleTokenContract, web3 } from "../contracts";
 import SampleCard from "./SampleCard";
 
 export interface IMySampleCard {
@@ -32,7 +32,7 @@ const MySampleCard: FC<MySampleCardProps> = ({
         try {
             if (!account || !saleStatus) return;
 
-            const response = await saleSampleTokenContract.methods
+            const response = await sampleTokenContract.methods
                 .setForSaleToken(
                     tokenId,
                     web3.utils.toWei(sellPrice, "ether")

@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./MintTokenContract.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract SaleTokenContract {
     MintTokenContract public mintTokenContract;

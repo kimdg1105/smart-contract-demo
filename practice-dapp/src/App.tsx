@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 
@@ -7,7 +7,7 @@ import MySample from "./routes/my-sample";
 import SaleSample from "./routes/sale-sample";
 
 const App: FC = () => {
-  const [account, setAccount] = React.useState<string>("");
+  const [account, setAccount] = useState<string>("");
 
   const getAccount = async () => {
     try {

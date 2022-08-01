@@ -1,8 +1,8 @@
 import { Grid } from "@chakra-ui/react";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { IMySampleCard } from "../components/MySampleCard";
 import SaleSampleCard from "../components/SaleSampleCard";
-import { saleSampleTokenContract, mintSampleTokenContract } from "../contracts";
+import { sampleTokenContract } from "../contracts";
 
 interface SaleSampleProps {
     account: string;
@@ -16,12 +16,12 @@ const SaleSample: FC<SaleSampleProps> = ({ account }) => {
         try {
             const tempOnSaleArray: IMySampleCard[] = [];
 
-            const response = await saleSampleTokenContract.methods
+            const response = await sampleTokenContract.methods
                 .getOnSaleTokens()
                 .call();
 
             response.map((v: IMySampleCard) => {
-                tempOnSaleArray.push({ tokenId: v.tokenId, tokenType: v.tokenType, tokenPrice: v.tokenPrice });
+                return tempOnSaleArray.push({ tokenId: v.tokenId, tokenType: v.tokenType, tokenPrice: v.tokenPrice });
             });
             setSaleSampleCardArray(tempOnSaleArray);
         } catch (error) {

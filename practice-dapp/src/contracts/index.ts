@@ -1,7 +1,7 @@
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 
-const mintSampleTokenAbi: AbiItem[] = [
+const sampleTokenAbi: AbiItem[] = [
     {
         "inputs": [],
         "stateMutability": "nonpayable",
@@ -83,6 +83,31 @@ const mintSampleTokenAbi: AbiItem[] = [
         "type": "event"
     },
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint64",
+                "name": "expires",
+                "type": "uint64"
+            }
+        ],
+        "name": "UpdateUser",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -139,6 +164,81 @@ const mintSampleTokenAbi: AbiItem[] = [
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getBlockTimeStamp",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getOnSaleTokenArrayLength",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getOnSaleTokens",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenType",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenPrice",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct SampleTokenV1.TokenData[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getTokenPrice",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint256",
@@ -185,7 +285,7 @@ const mintSampleTokenAbi: AbiItem[] = [
                         "type": "uint256"
                     }
                 ],
-                "internalType": "struct MintTokenContract.TokenData[]",
+                "internalType": "struct SampleTokenV1.TokenData[]",
                 "name": "",
                 "type": "tuple[]"
             }
@@ -265,6 +365,19 @@ const mintSampleTokenAbi: AbiItem[] = [
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "_tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "purchaseToken",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
                 "name": "from",
                 "type": "address"
@@ -314,19 +427,6 @@ const mintSampleTokenAbi: AbiItem[] = [
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "saleTokenContract",
-        "outputs": [
-            {
-                "internalType": "contract SaleTokenContract",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [
             {
                 "internalType": "address",
@@ -347,12 +447,40 @@ const mintSampleTokenAbi: AbiItem[] = [
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "_saleTokenContractAddress",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "_tokenId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_price",
+                "type": "uint256"
             }
         ],
-        "name": "setSaleTokenContract",
+        "name": "setForSaleToken",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "uint64",
+                "name": "expires",
+                "type": "uint64"
+            }
+        ],
+        "name": "setUser",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -440,6 +568,25 @@ const mintSampleTokenAbi: AbiItem[] = [
                 "type": "uint256"
             }
         ],
+        "name": "tokenPrices",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
         "name": "tokenTypes",
         "outputs": [
             {
@@ -505,177 +652,52 @@ const mintSampleTokenAbi: AbiItem[] = [
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
-    }
-];
-const saleSampleTokenAbi: AbiItem[] = [
+    },
     {
         "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "userExpires",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "userOf",
+        "outputs": [
             {
                 "internalType": "address",
-                "name": "_mintAnimalTokenAddress",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "inputs": [],
-        "name": "getOnSaleTokenArrayLength",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getOnSaleTokens",
-        "outputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "tokenId",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "tokenType",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "tokenPrice",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct SaleTokenContract.TokenData[]",
-                "name": "",
-                "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "getTokenPrice",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "mintTokenContract",
-        "outputs": [
-            {
-                "internalType": "contract MintTokenContract",
                 "name": "",
                 "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "onSaleTokenArray",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_tokenId",
-                "type": "uint256"
-            }
-        ],
-        "name": "purchaseToken",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_tokenId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_price",
-                "type": "uint256"
-            }
-        ],
-        "name": "setForSaleToken",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "tokenPrices",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
             }
         ],
         "stateMutability": "view",
         "type": "function"
     }
-];
+]
 
-const mintSampleTokenAddress = "0xF99C87c12a5e2C58a3C2714e47f99cCFA3a63596";
-export const saleSampleTokenAddress = "0xd6A276f0B910FE5FBFa63a2E53d7C0b2E8060d2b";
+export const sampleTokenAddress = "0x118Cd701FDd758027866E8F73c39d13De003D60C";
 
 export const web3 = new Web3(window.ethereum);
 
-export const mintSampleTokenContract = new web3.eth.Contract(
-    mintSampleTokenAbi,
-    mintSampleTokenAddress
-);
-
-export const saleSampleTokenContract = new web3.eth.Contract(
-    saleSampleTokenAbi,
-    saleSampleTokenAddress
+export const sampleTokenContract = new web3.eth.Contract(
+    sampleTokenAbi,
+    sampleTokenAddress
 );
