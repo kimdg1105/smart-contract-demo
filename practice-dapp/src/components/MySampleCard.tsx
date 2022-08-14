@@ -1,19 +1,18 @@
 import { Box, Button, Input, InputGroup, InputRightAddon, Text } from "@chakra-ui/react";
 import { ChangeEvent, FC, useState } from "react";
-import { sampleTokenContract, web3 } from "../contracts";
+import { useWeb3Auth } from "../services/web3auth";
 import SampleCard from "./SampleCard";
 
 export interface IMySampleCard {
     tokenId: string;
     tokenType: string;
     tokenPrice: string;
-
 }
-
 interface MySampleCardProps extends IMySampleCard {
     saleStatus: boolean;
     account: string;
 }
+
 const MySampleCard: FC<MySampleCardProps> = ({
     tokenId,
     tokenType,
@@ -21,6 +20,7 @@ const MySampleCard: FC<MySampleCardProps> = ({
     saleStatus,
     account,
 }) => {
+    const { provider, setForSaleToken } = useWeb3Auth();
     const [sellPrice, setSellPrice] = useState<string>("");
     const [mySamplePrice, setMySamplePrice] = useState<string>(tokenPrice);
 
@@ -31,16 +31,9 @@ const MySampleCard: FC<MySampleCardProps> = ({
     const onClickSell = async () => {
         try {
             if (!account || !saleStatus) return;
-
-            const response = await sampleTokenContract.methods
-                .setForSaleToken(
-                    tokenId,
-                    web3.utils.toWei(sellPrice, "ether")
-                )
-                .send({ from: account });
-
+            const response = await setForSaleToken(account, tokenId, sellPrice);
             if (response.status) {
-                setMySamplePrice(web3.utils.toWei(sellPrice, "ether"));
+                setMySamplePrice(provider!.web3.utils.toWei(sellPrice, "ether"));
             }
         } catch (error) {
             console.error(error);
@@ -67,7 +60,7 @@ const MySampleCard: FC<MySampleCardProps> = ({
                     </>
                 ) : (
                     <Text d="inline-block">
-                        {web3.utils.fromWei(mySamplePrice)} ETH
+                        {provider!.web3.utils.fromWei(mySamplePrice)} ETH
                     </Text>
                 )}
             </Box>

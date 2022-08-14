@@ -1,7 +1,6 @@
-import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 
-const sampleTokenAbi: AbiItem[] = [
+export const sampleTokenAbi: AbiItem[] = [
     {
         "inputs": [],
         "stateMutability": "nonpayable",
@@ -693,11 +692,4 @@ const sampleTokenAbi: AbiItem[] = [
     }
 ]
 
-export const sampleTokenAddress = "0x118Cd701FDd758027866E8F73c39d13De003D60C";
-
-export const web3 = new Web3(window.ethereum);
-
-export const sampleTokenContract = new web3.eth.Contract(
-    sampleTokenAbi,
-    sampleTokenAddress
-);
+export const sampleTokenAddress = "0x92399e8F8e0963377A07092c313E14Fc6ddeECf6";

@@ -7,7 +7,7 @@ interface SampleCardProps {
 
 const SampleCard: FC<SampleCardProps> = ({ tokenType }) => {
     return (
-        <Image w={150} h={150} src={`images/${tokenType}.jpg`} alt="SampleCard" />
+        <Image w={200} h={200} src={`images/${tokenType}.jpg`} alt="SampleCard" />
     );
 };
 

@@ -1,25 +1,30 @@
 import { FC } from "react";
-import { Button, Flex, Stack, Text } from "@chakra-ui/react";
+import { Button, Flex, Stack, Text, useColorModeValue } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 const Layout: FC = ({ children }) => {
     return (
-        <Stack h={"100vh"}>
+        <Stack h={"150vh"} order={1}  >
             <Flex
-                bg={"green.200"}
+                bg={"blue.100"}
                 p={4}
                 justifyContent="space-around"
                 alignItems="center"
             >
-                <Text fontWeight="bold">Smart Contract Practice</Text>
+                <Text
+                    fontSize="2xl"
+                    color={useColorModeValue("gray.800", "gray.600")}
+                >
+                    Smart Contract Practice
+                </Text>
                 <Link to={"/"}>
-                    <Button size="sm" colorScheme={"orange"}>Main</Button>
+                    <Button size="md" colorScheme={"blue"}>Mint</Button>
                 </Link>
                 <Link to={"sale-sample"}>
-                    <Button size="sm" colorScheme={"yellow"}>MarketPlace</Button>
+                    <Button size="md" colorScheme={"blue"}>MarketPlace</Button>
                 </Link>
                 <Link to={"my-sample"}>
-                    <Button size="sm" colorScheme={"blue"}>My Samples</Button>
+                    <Button size="md" colorScheme={"blue"}>My Samples</Button>
                 </Link>
             </Flex>
             <Flex
@@ -30,7 +35,7 @@ const Layout: FC = ({ children }) => {
             >
                 {children}
             </Flex>
-        </Stack>
+        </Stack >
     );
 };
 

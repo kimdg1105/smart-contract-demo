@@ -78,6 +78,10 @@ contract SampleTokenV1 is ERC721Enumerable, IERC4907 {
         ) % 5) + 1;
         tokenTypes[tokenId] = tokenType;
         _mint(msg.sender, tokenId);
+
+        // after contract deployed, msg.sender's token shound approve contract
+        // _approve(address(this), tokenId);
+
         return tokenId;
     }
 
@@ -133,7 +137,7 @@ contract SampleTokenV1 is ERC721Enumerable, IERC4907 {
         tokenPrices[_tokenId] = 0;
 
         payable(tokenOwner).transfer(msg.value);
-        safeTransferFrom(tokenOwner, msg.sender, _tokenId);
+        this.safeTransferFrom(tokenOwner, msg.sender, _tokenId);
 
         for (uint256 i = 0; i < _onSaleTokenArray.length; i++) {
             if (tokenPrices[_onSaleTokenArray[i]] == 0) {
@@ -181,10 +185,11 @@ contract SampleTokenV1 is ERC721Enumerable, IERC4907 {
         address user,
         uint64 expires
     ) public virtual override {
-        require(
-            _isApprovedOrOwner(msg.sender, tokenId),
-            "ERC721: transfer caller is not owner nor approved"
-        );
+        // For test : delegator can call this function
+        // require(
+        //     _isApprovedOrOwner(msg.sender, tokenId),
+        //     "ERC721: transfer caller is not owner nor approved"
+        // );
         require(userOf(tokenId) == address(0), "User already assigned");
         require(expires > block.timestamp, "expires should be in future");
         _beforeTokenTransfer(msg.sender, user, tokenId);

@@ -1,8 +1,7 @@
 import { Box, Button, Text, Input } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
-import { sampleTokenContract, web3 } from "../contracts";
+import { useWeb3Auth } from "../services/web3auth";
 import SampleCard from "./SampleCard";
-
 interface SaleSampleCardProps {
     tokenType: string;
     tokenPrice: string;
@@ -12,6 +11,8 @@ interface SaleSampleCardProps {
 }
 
 const SaleSampleCard: FC<SaleSampleCardProps> = ({ tokenType, tokenPrice, tokenId, account, getOnSaleSampleTokens }) => {
+    const { provider, purchaseToken, setTokenUser } = useWeb3Auth();
+    const { ownerOf, userOf } = useWeb3Auth();
     const [isBuyable, setIsBuyable] = useState<boolean>(false);
     const [isRentable, setIsRentable] = useState<boolean>(false);
     const [rentTime, setRentTime] = useState<string>("");
@@ -21,9 +22,7 @@ const SaleSampleCard: FC<SaleSampleCardProps> = ({ tokenType, tokenPrice, tokenI
 
     const getSampleTokenOwner = async () => {
         try {
-            const response = await sampleTokenContract.methods
-                .ownerOf(tokenId)
-                .call();
+            const response = await ownerOf(tokenId);
             if (response) {
                 setIsBuyable(response.toLocaleLowerCase() === account.toLocaleLowerCase());
                 setOwner(response.toLocaleLowerCase());
@@ -33,12 +32,9 @@ const SaleSampleCard: FC<SaleSampleCardProps> = ({ tokenType, tokenPrice, tokenI
         }
     }
 
-
     const getSampleTokenUser = async () => {
         try {
-            const response = await sampleTokenContract.methods
-                .userOf(tokenId)
-                .call();
+            const response = await userOf(tokenId);
             if (response) {
                 setIsRentable(response.toLocaleLowerCase() !== '0x0000000000000000000000000000000000000000');
                 setUser(response.toLocaleLowerCase());
@@ -51,9 +47,7 @@ const SaleSampleCard: FC<SaleSampleCardProps> = ({ tokenType, tokenPrice, tokenI
     const onClickBuy = async () => {
         try {
             if (!account) return;
-            const response = await sampleTokenContract.methods
-                .purchaseToken(tokenId)
-                .send({ from: account, value: tokenPrice });
+            const response = await purchaseToken(account, tokenId, tokenPrice);
             if (response.status) {
                 getOnSaleSampleTokens();
             }
@@ -66,14 +60,8 @@ const SaleSampleCard: FC<SaleSampleCardProps> = ({ tokenType, tokenPrice, tokenI
     const onClickRent = async () => {
         try {
             if (!account || !rentTime) return;
-
             const unixTimestamp = new Date(rentTime).getTime() / 1000;
-
-            console.log(tokenId, account, unixTimestamp);
-
-            const response = await sampleTokenContract.methods
-                .setUser(tokenId, account, unixTimestamp)
-                .send({ from: account });
+            const response = await setTokenUser(account, tokenId, unixTimestamp);
             if (response.status) {
                 getOnSaleSampleTokens();
             }
@@ -83,25 +71,48 @@ const SaleSampleCard: FC<SaleSampleCardProps> = ({ tokenType, tokenPrice, tokenI
         }
     }
 
-
     useEffect(() => {
         getSampleTokenOwner();
         getSampleTokenUser();
-    }, []);
+    });
 
     return (
-        <Box textAlign={'center'} w={150} d="inline-block">
+        <Box maxW='sm' borderWidth='1px' borderRadius='lg' overflow='hidden' textAlign={'center'} w={200} d="inline-block">
             <SampleCard tokenType={tokenType} />
-            <Box >
-                <Text d="inline-block">
-                    {web3.utils.fromWei(tokenPrice)} Ether
-                </Text>
-                <Box >
-                    <Text>
-                        소유자 =  {owner.substring(0, 6)}...
+            <Box p='5'>
+                <Box display='flex' alignItems='baseline'>
+                    <Box
+                        color='gray.500'
+                        fontWeight='semibold'
+                        letterSpacing='wide'
+                        fontSize='xs'
+                        textTransform='uppercase'
+                        ml='2'
+                    >
+                        소유자  {owner.substring(0, 10)}...
                         <br />
-                        임대자 =  {user.substring(0, 6)}...
+                        임대자  {user.substring(0, 10)}...
+                    </Box>
+                </Box>
+
+                <Box
+                    mt='3'
+                    fontWeight='semibold'
+                    as='h4'
+                    lineHeight='tight'
+                    noOfLines={1}
+                >
+                    {"NFT 타이틀"}
+                </Box>
+                <Box>
+                    <Text d="inline-block">
+                        {provider!.web3.utils.fromWei(tokenPrice)}
                     </Text>
+                    <Box as='span' color='gray.600' fontSize='sm'>
+                        / Ether
+                    </Box>
+                </Box>
+                <Box >
                     <Button size={"sm"} colorScheme="green" m={2} disabled={isBuyable} onClick={onClickBuy}>
                         Buy!
                     </Button>
@@ -111,12 +122,13 @@ const SaleSampleCard: FC<SaleSampleCardProps> = ({ tokenType, tokenPrice, tokenI
                         size="xs"
                         type="datetime-local"
                     />
-                    <Button size={"sm"} colorScheme="blue" m={2} disabled={isRentable || isBuyable} onClick={onClickRent}>
+                    <Button size={"sm"} colorScheme="yellow" m={2} disabled={isRentable || isBuyable} onClick={onClickRent}>
                         Rent!
                     </Button>
                 </Box>
             </Box>
-        </Box >);
+        </Box >
+    );
 };
 
 export default SaleSampleCard;

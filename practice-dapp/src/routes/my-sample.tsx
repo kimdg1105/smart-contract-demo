@@ -1,28 +1,24 @@
 import { Button, Flex, Grid, Text } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import MySampleCard, { IMySampleCard } from "../components/MySampleCard";
-import { sampleTokenContract, sampleTokenAddress } from "../contracts";
+import { useWeb3Auth } from "../services/web3auth";
 
 interface MySampleProps {
     account: string;
 }
 
 const MySample: FC<MySampleProps> = ({ account }) => {
+    const { balanceOf, setApprovalForAll, getIsApproved, getTokens } = useWeb3Auth();
     const [sampleCardArray, setSampleCardArray] = useState<IMySampleCard[]>();
     const [saleStatus, setSaleStatus] = useState<boolean>(false);
 
     const getSampleTokens = async () => {
         try {
-            const balanceLength = await sampleTokenContract.methods
-                .balanceOf(account)
-                .call();
+            const balanceLength = await balanceOf(account);
             if (balanceLength === "0") return;
 
             const tempSampleCardArray: IMySampleCard[] = [];
-            const response = await sampleTokenContract.methods
-                .getTokens(account)
-                .call();
-
+            const response = await getTokens(account);
             response.map((v: IMySampleCard) => {
                 return tempSampleCardArray.push({ tokenId: v.tokenId, tokenType: v.tokenType, tokenPrice: v.tokenPrice });
             });
@@ -32,11 +28,9 @@ const MySample: FC<MySampleProps> = ({ account }) => {
         }
     };
 
-    const getIsApproved = async () => {
+    const getIsApprovedAccount = async () => {
         try {
-            const response = await sampleTokenContract.methods
-                .isApprovedForAll(account, sampleTokenAddress)
-                .call();
+            const response = await getIsApproved(account);
             if (response) {
                 setSaleStatus(response);
             }
@@ -49,23 +43,17 @@ const MySample: FC<MySampleProps> = ({ account }) => {
     const onClickApproveToggle = async () => {
         try {
             if (!account) return;
-
-            const response = await sampleTokenContract.methods
-                .setApprovalForAll(sampleTokenAddress, !saleStatus)
-                .send({ from: account });
-
+            const response = await setApprovalForAll(account, !saleStatus);
             if (response.status) {
                 setSaleStatus(!saleStatus);
             }
-
         } catch (error) {
             console.log(error);
         }
     };
 
     useEffect(() => {
-        if (!account) return;
-        getIsApproved();
+        getIsApprovedAccount();
         getSampleTokens();
     });
 
